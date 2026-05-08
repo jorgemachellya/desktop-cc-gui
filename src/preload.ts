@@ -56,6 +56,9 @@ const electronAPI = {
   /**
    * Register a listener for messages from the main process.
    * Returns a cleanup function to remove the listener.
+   *
+   * Note: prefer using the returned cleanup function in useEffect hooks
+   * to avoid listener leaks when components unmount.
    */
   on: (
     channel: ReceiveChannel,
@@ -69,6 +72,7 @@ const electronAPI = {
       return () => ipcRenderer.removeListener(channel, subscription);
     }
     console.warn(`[preload] Blocked listener on unauthorized channel: ${channel}`);
+    // Return a no-op so callers can always safely call the returned function
     return () => {};
   },
 
